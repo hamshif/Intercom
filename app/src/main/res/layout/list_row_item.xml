@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
+    android:id = "@+id/ll_listItemRow"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/com_activity_unit"
+    android:orientation="horizontal"
+    android:background="@color/light_blue"
+    >
+    
+     <ImageView 
+        android:id="@+id/rowItemImage"
+        android:scaleType="centerCrop"
+        android:layout_width="40dp"
+        android:layout_height="fill_parent"
+        android:layout_margin="3dp"
+	 />
+        
+     <TextView 
+        android:id="@+id/rowItemText"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:textStyle="bold"
+        android:textSize="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/blue"
+     />
+        
+</LinearLayout>
