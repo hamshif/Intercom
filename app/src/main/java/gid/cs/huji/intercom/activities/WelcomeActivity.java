@@ -1,5 +1,6 @@
 package gid.cs.huji.intercom.activities;
 
+import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,10 @@ import gid.cs.huji.intercom.R;
 /**
  * Created by gideonbar on 08/03/15.
  */
-public class WelcomeActivity extends FragmentActivity
+public class WelcomeActivity extends FragmentActivity implements BrowseFragment.BrowseFragmentListener
 {
+    private static final String TAG = WelcomeActivity.class.getSimpleName();
+
     private BrowseFragment browseFragment;
 
     private static ImageView iv_call;
@@ -104,9 +108,17 @@ public class WelcomeActivity extends FragmentActivity
         return l;
     }
 
-//    @Override
-//    public void onArticleSelected(int position) {
-//
-//    }
+    @Override
+    public void onArticleSelected(int position)
+    {
+        String text = "position " + position + " was clicked";
+        Log.d(TAG, text);
 
+        Context context = getApplicationContext();
+
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
 }
