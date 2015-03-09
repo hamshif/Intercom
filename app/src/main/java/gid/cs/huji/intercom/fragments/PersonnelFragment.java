@@ -9,15 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import gid.cs.huji.intercom.activities.ComActivity;
 import gid.cs.huji.intercom.R;
+import gid.cs.huji.intercom.model.Personnel;
 
 public class PersonnelFragment extends Fragment
 {
     private static final String TAG = PersonnelFragment.class.getSimpleName();
 
     private static LinearLayout ll_call;
+    private Personnel personnel;
 
     @Nullable
     @Override
@@ -32,32 +35,28 @@ public class PersonnelFragment extends Fragment
             @Override
             public void onClick(View v) {
 
-
                 Log.d(TAG, "");
-
                 call();
-
-
-//                WebView myWebView = (WebView) findViewById(R.id.webview);
-//                myWebView.clearCache(true);
-//                myWebView.loadUrl("http://e-10.cs.huji.ac.il:8000/intercom/webrtc_example/?room=432827");
-
-//                Uri uri = Uri.parse("http://e-10.cs.huji.ac.il:8000/intercom/webrtc_example/?room=342862");
-//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                startActivity(intent);
-
             }
         });
 
-
-
         return view;
-
     }
 
     private void call()
     {
         Intent intent = new Intent(this.getActivity(), ComActivity.class);
         startActivity(intent);
+    }
+
+
+    public void setPersonnel(Personnel personnel)
+    {
+        this.personnel = personnel;
+        TextView tv_header = (TextView) getView().findViewById(R.id.tv_header);
+        tv_header.setText(personnel.getBrowseText());
+
+        TextView tv_room = (TextView) getView().findViewById(R.id.tv_room);
+        tv_room.setText(personnel.getRoom());
     }
 }

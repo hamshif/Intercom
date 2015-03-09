@@ -31,7 +31,9 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 {
     private static final String TAG = WelcomeActivity.class.getSimpleName();
 
+    private PersonnelFragment personnelFragment;
     private BrowseFragment browseFragment;
+    private HeaderFragment headerFragment;
 
     private static ImageView iv_call;
 
@@ -53,7 +55,7 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
                 return;
             }
 
-            PersonnelFragment personnelFragment = new PersonnelFragment();
+            personnelFragment = new PersonnelFragment();
             personnelFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, personnelFragment).commit();
 
@@ -66,7 +68,7 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 
 
 
-            HeaderFragment headerFragment = new HeaderFragment();
+            headerFragment = new HeaderFragment();
             headerFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, headerFragment).commit();
 
@@ -85,40 +87,22 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
         }
     }
 
-    private List<IBrowsable> getPersonelList()
-    {
-        List<IBrowsable> l = new ArrayList<IBrowsable>();
-
-        String [] peronnel_names =
-                {
-                        "Danny", "Ely", "Jorge", "Raanan", "Tanya", "Yair", "Chana",
-                        "Dima", "Tomer", "Ephraim", "Ultra", "Gideon", "Naama",
-                };
-
-        String path = "stam";
-        String surname = "Surname";
-        String room = "B 101";
-
-
-        for(int i=0; i<peronnel_names.length; i++)
-        {
-            l.add(new Personnel(peronnel_names[i], surname, path, room));
-        }
-
-        return l;
-    }
-
     @Override
-    public void onArticleSelected(int position)
+    public void onArticleSelected(int position, Personnel personnel)
     {
-        String text = "position " + position + " was clicked";
-        Log.d(TAG, text);
+//        String text = personnel.getBrowseText() + "\n" + personnel.getRoom();
+//        Log.d(TAG, text);
+//
+//        Context context = getApplicationContext();
+//
+//        int duration = Toast.LENGTH_SHORT;
+//
+//        Toast toast = Toast.makeText(context, text, duration);
+//        toast.show();
 
-        Context context = getApplicationContext();
-
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        if(personnelFragment != null)
+        {
+            personnelFragment.setPersonnel(personnel);
+        }
     }
 }

@@ -36,7 +36,7 @@ public class BrowseAdapter extends ArrayAdapter<IBrowsable>
         BrowseAdapter.layoutResourceId = layoutResourceId;
         this.context = context;
         this.list = list;
-         personnelListener = new PersonnelListener();
+        personnelListener = new PersonnelListener();
         
         Log.d(TAG, "created browse adapter");
     }

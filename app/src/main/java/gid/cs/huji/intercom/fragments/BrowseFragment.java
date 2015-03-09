@@ -4,6 +4,7 @@ package gid.cs.huji.intercom.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class BrowseFragment extends ListFragment
 
     private static ListView lv;
 
-    private List<IBrowsable> getPersonelList()
+    private List<IBrowsable> getPersonnelList()
     {
         List<IBrowsable> l = new ArrayList<IBrowsable>();
 
@@ -40,12 +41,17 @@ public class BrowseFragment extends ListFragment
 
         String path = "stam";
         String surname = "Surname";
-        String room = "B 101";
+
+        String [] rooms =
+        {
+            "B 101", "B 102", "B 104", "B 104", "B 105", "B 106", "B 107",
+            "B 100", "B 100", "B 100", "A 101", "B 100", "B 100",
+        };
 
 
         for(int i=0; i<peronnel_names.length; i++)
         {
-            l.add(new Personnel(peronnel_names[i], surname, path, room));
+            l.add(new Personnel(peronnel_names[i], surname, path, rooms[i]));
         }
 
         return l;
@@ -54,7 +60,7 @@ public class BrowseFragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
     {
-        personnel_adapter = new BrowseAdapter(inflater.getContext(), R.layout.list_row_item, getPersonelList());
+        personnel_adapter = new BrowseAdapter(inflater.getContext(), R.layout.list_row_item, getPersonnelList());
         this.setListAdapter(personnel_adapter);
 
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -62,12 +68,12 @@ public class BrowseFragment extends ListFragment
 
 
 
-    BrowseFragmentListener callback;
+    private BrowseFragmentListener callback;
 
     // Container Activity must implement this interface
     public interface BrowseFragmentListener
     {
-        public void onArticleSelected(int position);
+        public void onArticleSelected(int position, Personnel personnel);
     }
 
     @Override
@@ -89,9 +95,14 @@ public class BrowseFragment extends ListFragment
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(ListView l, View v, int position, long id)
+    {
+        Personnel personnel = (Personnel) l.getItemAtPosition(position);
+
+        String selection = personnel.toString();
+        Log.d(TAG, "selection: " + selection);
         // Send the event to the host activity
-        callback.onArticleSelected(position);
+        callback.onArticleSelected(position, personnel);
     }
 
 }
