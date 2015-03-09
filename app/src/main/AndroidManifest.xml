@@ -38,6 +38,14 @@
             </intent-filter>
         </activity>
 
+        <service android:name="gid.cs.huji.intercom.services.PersonnelService">
+
+            <intent-filter>
+                <action android:name="gid.cs.huji.intercom.services.PersonnelService" />
+            </intent-filter>
+
+        </service>
+
     </application>
 
 </manifest>

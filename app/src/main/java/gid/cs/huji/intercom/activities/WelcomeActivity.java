@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import gid.cs.huji.intercom.services.PersonnelService;
 import gid.gidutil.GidUtil;
 import gid.interfaces.IBrowsable;
 import gid.cs.huji.intercom.fragments.PersonnelFragment;
@@ -31,6 +32,8 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 {
     private static final String TAG = WelcomeActivity.class.getSimpleName();
 
+    private FrameLayout onScreen;
+
     private PersonnelFragment personnelFragment;
     private BrowseFragment browseFragment;
     private HeaderFragment headerFragment;
@@ -43,37 +46,71 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
         GidUtil.clearWindow(WelcomeActivity.this);
         super.onCreate(savedInstanceState);
 
-        FrameLayout onScreen = (FrameLayout) getLayoutInflater().inflate(R.layout.intercom, null);
-//        LinearLayout onScreen = (LinearLayout) getLayoutInflater().inflate(R.layout.intercom, null);
-        setContentView(onScreen);
-
-        if (findViewById(
-                R.id.fragment_container) != null)
+        if (findViewById(R.id.fragment_container) != null)
         {
             if (savedInstanceState != null)
             {
                 return;
             }
+        }
 
-            personnelFragment = new PersonnelFragment();
-            personnelFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, personnelFragment).commit();
+        setParameters();
+        createGUI();
+        getData();
+
+    }
+
+    private void setParameters() {
+
+    }
+
+    private void getData()
+    {
+        Bundle bundle = new Bundle();
+
+        String searchQuery = "{\"query\": \"yo\"}";
+
+        Intent intent = new Intent(this, PersonnelService.class);
+
+        bundle.putString(PersonnelService.PROPERTY_QUERY_TYPE, "JSON");
+        bundle.putString(PersonnelService.PROPERTY_QUERY, searchQuery);
+
+        intent.putExtra(PersonnelService.PERSONNEL_BUNDLE, bundle);
+
+//        Messenger uiMessenger = new Messenger(new SearchHandler());
+//        intent.putExtra(CATEGORY_SEARCH_MESSANGER, uiMessenger);
+
+        startService(intent);
+
+        Log.d(TAG, "Finished search()");
+
+
+
+        startService(intent);
+    }
+
+    private void createGUI()
+    {
+        onScreen = (FrameLayout) getLayoutInflater().inflate(R.layout.intercom, null);
+//        LinearLayout onScreen = (LinearLayout) getLayoutInflater().inflate(R.layout.intercom, null);
+        setContentView(onScreen);
+
+        personnelFragment = new PersonnelFragment();
+        personnelFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, personnelFragment).commit();
 
 //            LinearLayout ll = (LinearLayout) getLayoutInflater().inflate(R.layout.list_browse, null);
 //            onScreen.addView(ll);
 
-            browseFragment = new BrowseFragment();
-            browseFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.list_container, browseFragment).commit();
+        browseFragment = new BrowseFragment();
+        browseFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction().add(R.id.list_container, browseFragment).commit();
 
 
 
-            headerFragment = new HeaderFragment();
-            headerFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, headerFragment).commit();
-
-
-        }
+        headerFragment = new HeaderFragment();
+        headerFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, headerFragment).commit();
     }
 
 

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import gid.adapters.BrowseAdapter;
@@ -33,14 +34,25 @@ public class BrowseFragment extends ListFragment
     {
         List<IBrowsable> l = new ArrayList<IBrowsable>();
 
+        HashMap<Integer, HashMap<String, String>> h_personnel = new HashMap<Integer, HashMap<String, String>>();
+
         String [] peronnel_names =
         {
             "Danny", "Ely", "Jorge", "Raanan", "Tanya", "Yair", "Chana",
-            "Dima", "Tomer", "Ephraim", "Ultra", "Gideon", "Naama",
+            "Dima", "Tomer", "Ephraim", "Pavel", "Naama", "Gideon",
         };
 
-        String path = "stam";
-        String surname = "Surname";
+        String [] paths =
+        {
+            "/img...", "/img...", "/img...", "/img...", "/img...", "/img...", "/img...",
+            "/img...", "/img...", "/img...", "/img...", "/img...", "/img...",
+        };
+
+        String [] surnames =
+        {
+            "Braniss", "Levi", "Najenson", "Chermoni", "Kuzmitski", "Yarom", "Slutzkin",
+            "Surname", "Klainer", "Silverberg", "Gak", "Shemesh", "Bar",
+        };
 
         String [] rooms =
         {
@@ -48,10 +60,19 @@ public class BrowseFragment extends ListFragment
             "B 100", "B 100", "B 100", "A 101", "B 100", "B 100",
         };
 
+        HashMap<String, String> h;
 
         for(int i=0; i<peronnel_names.length; i++)
         {
-            l.add(new Personnel(peronnel_names[i], surname, path, rooms[i]));
+            h = new HashMap<String, String>();
+            h.put("name", peronnel_names[i]);
+            h.put("surname", surnames[i]);
+            h.put("room", rooms[i]);
+            h.put("path", paths[i]);
+
+            h_personnel.put(i, h);
+
+            l.add(new Personnel(peronnel_names[i], surnames[i], paths[i], rooms[i]));
         }
 
         return l;
@@ -65,7 +86,6 @@ public class BrowseFragment extends ListFragment
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
-
 
 
     private BrowseFragmentListener callback;
@@ -104,5 +124,4 @@ public class BrowseFragment extends ListFragment
         // Send the event to the host activity
         callback.onArticleSelected(position, personnel);
     }
-
 }
