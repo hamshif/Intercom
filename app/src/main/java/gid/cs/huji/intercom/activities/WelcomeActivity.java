@@ -57,7 +57,6 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
         setParameters();
         createGUI();
         getData();
-
     }
 
     private void setParameters() {

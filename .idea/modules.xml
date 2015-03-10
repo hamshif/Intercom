@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Intercom.iml" filepath="$PROJECT_DIR$/Intercom.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gidlib/gidlib.iml" filepath="$PROJECT_DIR$/gidlib/gidlib.iml" />
     </modules>
   </component>
 </project>

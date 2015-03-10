@@ -18,6 +18,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+
+import gid.cs.huji.intercom.json_deserialize.JsonToPersonnel;
 
 
 public class PersonnelService extends IntentService
@@ -67,6 +70,10 @@ public class PersonnelService extends IntentService
             String s = getRequest(SERVER_URL + "?location=chimichanga");
 
             Log.d(TAG, "This is the result of the get: " + s);
+
+
+            JsonToPersonnel jsonToPersonnel = new JsonToPersonnel();
+            jsonToPersonnel.deserialize(s);
 
             return null;
         }
