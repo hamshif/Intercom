@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import gid.adapters.BrowseAdapter;
+import gid.cs.huji.intercom.adapters.BrowseAdapter;
+import gid.cs.huji.intercom.model.Room;
 import gid.interfaces.IBrowsable;
 import gid.cs.huji.intercom.R;
 import gid.cs.huji.intercom.model.Personnel;
@@ -54,25 +55,14 @@ public class BrowseFragment extends ListFragment
             "Surname", "Klainer", "Silverberg", "Gak", "Shemesh", "Bar",
         };
 
-        String [] rooms =
-        {
-            "B 101", "B 102", "B 104", "B 104", "B 105", "B 106", "B 107",
-            "B 100", "B 100", "B 100", "A 101", "B 100", "B 100",
-        };
+        ArrayList<Room> rooms = new ArrayList<Room>();
 
-        HashMap<String, String> h;
 
         for(int i=0; i<peronnel_names.length; i++)
         {
-            h = new HashMap<String, String>();
-            h.put("name", peronnel_names[i]);
-            h.put("surname", surnames[i]);
-            h.put("room", rooms[i]);
-            h.put("path", paths[i]);
+            rooms.add(new Room(null, 3, "Rothberg", "B", 1, 3));
 
-            h_personnel.put(i, h);
-
-            l.add(new Personnel(peronnel_names[i], surnames[i], paths[i], rooms[i]));
+            l.add(new Personnel(null, 3, peronnel_names[i], surnames[i], paths[i], rooms.get(i)));
         }
 
         return l;

@@ -1,4 +1,4 @@
-package gid.gidutil;
+package gid.util;
 
 
 import android.app.Activity;

@@ -8,10 +8,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Map;
 
 import gid.cs.huji.intercom.model.Personnel;
+import gid.cs.huji.intercom.model.Room;
+import gid.db_util.CommonColumnNames;
 
 /**
  * Created by gideonbar on 10/03/15.
@@ -20,15 +22,6 @@ public class JsonToPersonnel
 {
     private static final String TAG = JsonToPersonnel.class.getSimpleName();
 
-    public static final String KEY_ID_ORDER = "id_order";
-    public static final String KEY_PERSONNEL = "personnel";
-    public static final String KEY_UPDATE = "update";
-
-    public static final String KEY_PERSON_NAME = "name";
-    public static final String KEY_PERSON_SURNAME = "surname";
-    public static final String KEY_ROOM = "room";
-    public static final String KEY_PATH = "path";
-
 
     public void deserialize(String j)
     {
@@ -36,29 +29,70 @@ public class JsonToPersonnel
         {
             JsonObject jo_map = new JsonParser().parse(j).getAsJsonObject();
 
-            JsonArray ja_id_order = jo_map.get(KEY_ID_ORDER).getAsJsonArray();
-            JsonObject jo_personnel = jo_map.get(KEY_PERSONNEL).getAsJsonObject();
-            String date = jo_map.get(KEY_UPDATE).getAsString();
+            JsonObject jo_rooms = jo_map.get("rooms").getAsJsonObject();
+            JsonArray ja_id_order = jo_map.get(Personnel.ID_ORDER).getAsJsonArray();
+            JsonObject jo_personnel = jo_map.get(Personnel.PERSONNEL).getAsJsonObject();
+            String s_date = jo_map.get(CommonColumnNames.UPDATE).getAsString();
 
             Gson gson = new Gson();
 
-            for (JsonElement e : ja_id_order)
+            JsonObject jo_room;
+
+            int server_id;
+            String building;
+            String wing;
+            int floor;
+            int num;
+
+            ArrayList<Room> rooms = new ArrayList<Room>();
+            Room room;
+
+            for (Map.Entry<String, JsonElement> entry : jo_rooms.entrySet())
             {
+                Log.d(TAG, entry.getKey() + "/" + entry.getValue());
+
+                jo_room = entry.getValue().getAsJsonObject();
+
+                server_id = Integer.parseInt(entry.getKey());
+                building = jo_room.get(Room.BUILDING).getAsString();
+                wing = jo_room.get(Room.WING).getAsString();
+                floor = Integer.parseInt(jo_room.get(Room.FLOOR).getAsString());
+                num = Integer.parseInt(jo_room.get(Room.NUM).getAsString());
+
+                room = new Room(null, server_id, building, wing, floor, num);
+
+                Log.d(TAG, room.getName());
+
+                rooms.add(room);
+            }
+
+            String name;
+            String surname;
+            String path;
+
+            JsonElement e;
+
+            for (int i=0; i<ja_id_order.size(); i++)
+            {
+                e = ja_id_order.get(i);
+
+                server_id = ja_id_order.get(i).getAsInt();
+
                 JsonObject jo_person = jo_personnel.get(e.getAsString()).getAsJsonObject();
 
-                String name = jo_person.get(KEY_PERSON_NAME).getAsString();
+                name = jo_person.get(CommonColumnNames.NAME).getAsString();
 //                Log.d(TAG, name);
 
-                String surname = jo_person.get(KEY_PERSON_SURNAME).getAsString();
+                surname = jo_person.get(Personnel.SURNAME).getAsString();
 //                Log.d(TAG, surname);
 
-                String path = jo_person.get(KEY_PATH).getAsString();
+                path = jo_person.get(Personnel.PATH).getAsString();
 //                Log.d(TAG, path);
 
-                String room = jo_person.get(KEY_ROOM).getAsString();
+                room = rooms.get(jo_person.get(Room.ROOM).getAsInt());
 //                Log.d(TAG, room);
 
-                Personnel personnel = new Personnel(name, surname, path, room);
+                Personnel personnel = new Personnel(null, server_id, name, surname, path, room);
 
                 Log.d(TAG, personnel.getBrowseText());
             }

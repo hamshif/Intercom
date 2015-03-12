@@ -1,4 +1,4 @@
-package gid.adapters;
+package gid.cs.huji.intercom.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import gid.gidutil.GidUtil;
+import gid.util.GidUtil;
 import gid.interfaces.IBrowsable;
 import gid.cs.huji.intercom.R;
 import gid.cs.huji.intercom.listeners.PersonnelListener;

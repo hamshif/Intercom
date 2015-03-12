@@ -57,6 +57,6 @@ public class PersonnelFragment extends Fragment
         tv_header.setText(personnel.getBrowseText());
 
         TextView tv_room = (TextView) getView().findViewById(R.id.tv_room);
-        tv_room.setText(personnel.getRoom());
+        tv_room.setText(personnel.getRoom().getBrowseText());
     }
 }

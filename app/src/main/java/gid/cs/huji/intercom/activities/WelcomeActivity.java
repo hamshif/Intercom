@@ -1,24 +1,15 @@
 package gid.cs.huji.intercom.activities;
 
-import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import gid.cs.huji.intercom.services.PersonnelService;
-import gid.gidutil.GidUtil;
-import gid.interfaces.IBrowsable;
+import gid.util.GidUtil;
 import gid.cs.huji.intercom.fragments.PersonnelFragment;
 import gid.cs.huji.intercom.fragments.BrowseFragment;
 import gid.cs.huji.intercom.fragments.HeaderFragment;
