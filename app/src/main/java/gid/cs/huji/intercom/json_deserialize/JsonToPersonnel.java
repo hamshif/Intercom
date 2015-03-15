@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import gid.cs.huji.intercom.model.Personnel;
@@ -44,11 +45,12 @@ public class JsonToPersonnel
             int floor;
             int num;
 
-            ArrayList<Room> rooms = new ArrayList<Room>();
+            HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
             Room room;
 
             for (Map.Entry<String, JsonElement> entry : jo_rooms.entrySet())
             {
+
                 Log.d(TAG, entry.getKey() + "/" + entry.getValue());
 
                 jo_room = entry.getValue().getAsJsonObject();
@@ -63,7 +65,7 @@ public class JsonToPersonnel
 
                 Log.d(TAG, room.getName());
 
-                rooms.add(room);
+                rooms.put(server_id, room);
             }
 
             String name;
@@ -89,7 +91,7 @@ public class JsonToPersonnel
                 path = jo_person.get(Personnel.PATH).getAsString();
 //                Log.d(TAG, path);
 
-                room = rooms.get(jo_person.get(Room.ROOM).getAsInt());
+                room = rooms.get(new Integer(jo_person.get(Room.ROOM).getAsInt()));
 //                Log.d(TAG, room);
 
                 Personnel personnel = new Personnel(null, server_id, name, surname, path, room);
