@@ -6,7 +6,7 @@ import android.util.Log;
 
 import gid.cs.huji.intercom.model.Personnel;
 import gid.cs.huji.intercom.model.Room;
-import gid.db_util.CommonColumnNames;
+import gid.db_util.CommonKeys;
 import gid.interfaces.ITableDao;
 
 /**
@@ -18,9 +18,9 @@ public class PersonnelDao implements ITableDao<Personnel>
     private static final String TAG = PersonnelDao.class.getSimpleName();
     private SQLiteDatabase db;
 
-    public PersonnelDao(IntercomDBHelper dbHelper)
+    public PersonnelDao(SQLiteDatabase db)
     {
-        db = dbHelper.getWritableDatabase();
+        this.db = db;
     }
 
     public void closeDB()
@@ -34,19 +34,21 @@ public class PersonnelDao implements ITableDao<Personnel>
         try
         {
             String columns =
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                CommonColumnNames.SERVER_ID + " INTEGER, " +
-                "FOREIGN KEY(" + Personnel.ROOM_ID + ") REFERENCES id , " +
-                CommonColumnNames.NAME + " TEXT NOT NULL, " +
+                CommonKeys._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                CommonKeys.SERVER_ID + " INTEGER, " +
+                Personnel.ROOM_ID + " INTEGER, " +
+                CommonKeys.NAME + " TEXT NOT NULL, " +
                 Personnel.SURNAME + " TEXT NOT NULL, " +
-                Personnel.PATH + " TEXT NOT NULL, "
+                Personnel.PATH + " TEXT NOT NULL "
             ;
 
-            String meta = "";
+            String meta =
+                    "UNIQUE(" + CommonKeys.SERVER_ID + ") ON CONFLICT REPLACE, " +
+                    "FOREIGN KEY(" + Personnel.ROOM_ID + ") REFERENCES " + Room.ROOM + "(" + CommonKeys._ID + ")";
 
             db.execSQL
             (
-                "CREATE TABLE IF NOT EXISTS" + Personnel.PERSONNEL +
+                "CREATE TABLE IF NOT EXISTS " + Personnel.PERSONNEL +
                 " ( " +
                     columns + ", " + meta +
                 " );"
@@ -68,8 +70,8 @@ public class PersonnelDao implements ITableDao<Personnel>
         Log.i(TAG, "trying to insert personnel to db");
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CommonColumnNames.SERVER_ID, personnel.getServerId());
-        contentValues.put(CommonColumnNames.NAME, personnel.getName());
+        contentValues.put(CommonKeys.SERVER_ID, personnel.getServerId());
+        contentValues.put(CommonKeys.NAME, personnel.getName());
         contentValues.put(Personnel.SURNAME, personnel.getSurname());
         contentValues.put(Personnel.PATH, personnel.getPath());
         contentValues.put(Personnel.ROOM_ID, personnel.getRoom().getId());
@@ -82,7 +84,7 @@ public class PersonnelDao implements ITableDao<Personnel>
     public void deleteObject(Personnel personnel)
     {
         // Delete from DB where id match
-        db.delete(Room.ROOM, "id = " + personnel.getId(), null);
+        db.delete(Room.ROOM, CommonKeys._ID + " = " + personnel.getId(), null);
     }
 
 //   public List getPersonnelList()

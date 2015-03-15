@@ -1,6 +1,6 @@
 package gid.cs.huji.intercom.model;
 
-import gid.db_util.CommonColumnNames;
+import gid.db_util.CommonKeys;
 import gid.interfaces.IBrowsable;
 
 public class Personnel implements IBrowsable
@@ -9,8 +9,9 @@ public class Personnel implements IBrowsable
     public static final String PERSONNEL = "personnel";
     public static final String SURNAME = "surname";
     public static final String PATH = "path";
-    public static final String ROOM_ID = Room.ROOM + CommonColumnNames._ID;
+    public static final String ROOM_ID = Room.ROOM + CommonKeys._ID;
     public static final String ID_ORDER = "id_order";
+    public static final String PERSONNELS = "personnels";
 
 
     private Integer id;

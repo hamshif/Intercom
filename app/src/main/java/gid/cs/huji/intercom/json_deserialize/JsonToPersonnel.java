@@ -14,7 +14,7 @@ import java.util.Map;
 
 import gid.cs.huji.intercom.model.Personnel;
 import gid.cs.huji.intercom.model.Room;
-import gid.db_util.CommonColumnNames;
+import gid.db_util.CommonKeys;
 
 /**
  * Created by gideonbar on 10/03/15.
@@ -24,16 +24,20 @@ public class JsonToPersonnel
     private static final String TAG = JsonToPersonnel.class.getSimpleName();
 
 
-    public void deserialize(String j)
+    public HashMap<String, Object> deserialize(String j)
     {
+        HashMap<String, Object> personnelMap;
+
         try
         {
+            personnelMap = new HashMap<String, Object>();
+
             JsonObject jo_map = new JsonParser().parse(j).getAsJsonObject();
 
             JsonObject jo_rooms = jo_map.get("rooms").getAsJsonObject();
             JsonArray ja_id_order = jo_map.get(Personnel.ID_ORDER).getAsJsonArray();
             JsonObject jo_personnel = jo_map.get(Personnel.PERSONNEL).getAsJsonObject();
-            String s_date = jo_map.get(CommonColumnNames.UPDATE).getAsString();
+            String s_date = jo_map.get(CommonKeys.UPDATE).getAsString();
 
             Gson gson = new Gson();
 
@@ -50,7 +54,6 @@ public class JsonToPersonnel
 
             for (Map.Entry<String, JsonElement> entry : jo_rooms.entrySet())
             {
-
                 Log.d(TAG, entry.getKey() + "/" + entry.getValue());
 
                 jo_room = entry.getValue().getAsJsonObject();
@@ -74,6 +77,10 @@ public class JsonToPersonnel
 
             JsonElement e;
 
+
+            ArrayList<Personnel> personnel_list = new ArrayList<>();
+            Personnel personnel;
+
             for (int i=0; i<ja_id_order.size(); i++)
             {
                 e = ja_id_order.get(i);
@@ -82,7 +89,7 @@ public class JsonToPersonnel
 
                 JsonObject jo_person = jo_personnel.get(e.getAsString()).getAsJsonObject();
 
-                name = jo_person.get(CommonColumnNames.NAME).getAsString();
+                name = jo_person.get(CommonKeys.NAME).getAsString();
 //                Log.d(TAG, name);
 
                 surname = jo_person.get(Personnel.SURNAME).getAsString();
@@ -94,14 +101,24 @@ public class JsonToPersonnel
                 room = rooms.get(new Integer(jo_person.get(Room.ROOM).getAsInt()));
 //                Log.d(TAG, room);
 
-                Personnel personnel = new Personnel(null, server_id, name, surname, path, room);
+                personnel = new Personnel(null, server_id, name, surname, path, room);
 
                 Log.d(TAG, personnel.getBrowseText());
+
+                personnel_list.add(personnel);
             }
+
+
+            personnelMap.put(Room.ROOMS, rooms);
+            personnelMap.put(Personnel.PERSONNELS, personnel_list);
+
+            return personnelMap;
         }
         catch (Exception e)
         {
             Log.e(TAG, "", e);
         }
+
+        return null;
     }
 }

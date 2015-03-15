@@ -12,6 +12,7 @@ public class Room implements IBrowsable
     public static final String WING = "wing";
     public static final String FLOOR = "floor";
     public static final String NUM = "num";
+    public static final String ROOMS = "rooms";
 
 
     private Integer id;

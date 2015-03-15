@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import gid.cs.huji.intercom.model.Personnel;
 import gid.cs.huji.intercom.model.Room;
-import gid.db_util.CommonColumnNames;
+import gid.db_util.CommonKeys;
 import gid.interfaces.ITableDao;
 
 /**
@@ -18,9 +17,9 @@ public class RoomDao implements ITableDao<Room>
     private static final String TAG = RoomDao.class.getSimpleName();
     private SQLiteDatabase db;
 
-    public RoomDao(IntercomDBHelper dbHelper)
+    public RoomDao(SQLiteDatabase db)
     {
-        db = dbHelper.getWritableDatabase();
+        this.db = db;
     }
 
     public void closeDB()
@@ -29,24 +28,25 @@ public class RoomDao implements ITableDao<Room>
     }
 
 
-    public void createTable()
+    public void
+    createTable()
     {
         try
         {
             String columns =
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                CommonKeys._ID + " INTEGER PRIMARY KEY, " +
                 "server_id INTEGER, " +
                 Room.BUILDING + " TEXT NOT NULL, " +
                 Room.WING + " TEXT NOT NULL, " +
-                Room.FLOOR + " INTEGER, NOT NULL" +
-                CommonColumnNames.NAME + " TEXT NOT NULL";
+                Room.FLOOR + " INTEGER NOT NULL, " +
+                Room.NUM + " INTEGER NOT NULL ";
 
             String meta =
-                "UNIQUE(" + Room.BUILDING + ", " + Room.WING + ", " + Room.FLOOR + ", " + Room.ROOM + ") ON CONFLICT REPLACE ";
+                "UNIQUE(" + Room.BUILDING + ", " + Room.WING + ", " + Room.FLOOR + ", " + Room.NUM + ") ON CONFLICT REPLACE ";
 
             db.execSQL
             (
-                "CREATE TABLE IF NOT EXISTS" + Room.ROOM +
+                "CREATE TABLE IF NOT EXISTS " + Room.ROOM +
                 " ( " +
                     columns + ", " + meta +
                 " );"
@@ -68,11 +68,11 @@ public class RoomDao implements ITableDao<Room>
         Log.i(TAG, "trying to insert room to db");
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CommonColumnNames.SERVER_ID, room.getServer_id());
+        contentValues.put(CommonKeys.SERVER_ID, room.getServer_id());
         contentValues.put(Room.BUILDING, room.getBuilding());
         contentValues.put(Room.WING, room.getWing());
         contentValues.put(Room.FLOOR, room.getFloor());
-        contentValues.put(CommonColumnNames.NAME, room.getName());
+        contentValues.put(Room.NUM, room.getNum());
 
         db.insert(Room.ROOM, null, contentValues);
 
@@ -82,7 +82,7 @@ public class RoomDao implements ITableDao<Room>
     public void deleteObject(Room room)
     {
         // Delete from DB where id match
-        db.delete(Room.ROOM, "id = " + room.getId(), null);
+        db.delete(Room.ROOM, CommonKeys._ID + " = " + room.getId(), null);
     }
 
 //   public List getPersonnelList()

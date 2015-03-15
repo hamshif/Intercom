@@ -1,7 +1,9 @@
 package gid.cs.huji.intercom.services;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +20,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import gid.cs.huji.intercom.json_deserialize.JsonToPersonnel;
+import gid.cs.huji.intercom.model.Personnel;
+import gid.cs.huji.intercom.model.Room;
+import gid.cs.huji.intercom.sqlite_db.IntercomDBHelper;
+import gid.cs.huji.intercom.sqlite_db.PersonnelDao;
+import gid.cs.huji.intercom.sqlite_db.RoomDao;
 
 
 public class PersonnelService extends IntentService
@@ -42,7 +52,7 @@ public class PersonnelService extends IntentService
 
         Log.d(TAG, "constructor reached");
 
-        personnelAsync = new PersonnelAsync();
+        personnelAsync = new PersonnelAsync(this);
     }
 
     @Override
@@ -62,6 +72,12 @@ public class PersonnelService extends IntentService
 
     private class PersonnelAsync extends AsyncTask<String, Integer, Integer>
     {
+        Context context;
+
+        public PersonnelAsync(Context context)
+        {
+            this.context = context;
+        }
 
         @Override
         protected Integer doInBackground(String... params)
@@ -72,7 +88,32 @@ public class PersonnelService extends IntentService
 
 
             JsonToPersonnel jsonToPersonnel = new JsonToPersonnel();
-            jsonToPersonnel.deserialize(s);
+            HashMap<String, Object> personnelMap = jsonToPersonnel.deserialize(s);
+
+
+            IntercomDBHelper intercomDBHelper = new IntercomDBHelper(context);
+            SQLiteDatabase db = intercomDBHelper.getWritableDatabase();
+
+            RoomDao roomDao = new RoomDao(db);
+            roomDao.createTable();
+
+            PersonnelDao personnelDao = new PersonnelDao(db);
+            personnelDao.createTable();
+
+            HashMap<Integer, Room> rooms = (HashMap)personnelMap.get(Room.ROOMS);
+
+            for (Map.Entry<Integer, Room> entry : rooms.entrySet())
+            {
+                roomDao.persistObject(entry.getValue());
+            }
+
+            ArrayList<Personnel> personnel_list = (ArrayList)personnelMap.get(Personnel.PERSONNELS);
+
+            for(Personnel personnel: personnel_list)
+            {
+                personnelDao.persistObject(personnel);
+            }
+
 
             return null;
         }
