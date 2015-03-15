@@ -39,7 +39,9 @@ public class RoomDao implements ITableDao<Room>
                 Room.BUILDING + " TEXT NOT NULL, " +
                 Room.WING + " TEXT NOT NULL, " +
                 Room.FLOOR + " INTEGER NOT NULL, " +
-                Room.NUM + " INTEGER NOT NULL ";
+                Room.NUM + " INTEGER NOT NULL "
+
+            ;
 
             String meta =
                 "UNIQUE(" + Room.BUILDING + ", " + Room.WING + ", " + Room.FLOOR + ", " + Room.NUM + ") ON CONFLICT REPLACE ";
@@ -73,6 +75,7 @@ public class RoomDao implements ITableDao<Room>
         contentValues.put(Room.WING, room.getWing());
         contentValues.put(Room.FLOOR, room.getFloor());
         contentValues.put(Room.NUM, room.getNum());
+//        contentValues.put(CommonKeys.UPDATE, System.currentTimeMillis());
 
         db.insert(Room.ROOM, null, contentValues);
 

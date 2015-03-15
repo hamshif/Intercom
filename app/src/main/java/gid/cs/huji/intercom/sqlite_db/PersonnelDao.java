@@ -40,6 +40,8 @@ public class PersonnelDao implements ITableDao<Personnel>
                 CommonKeys.NAME + " TEXT NOT NULL, " +
                 Personnel.SURNAME + " TEXT NOT NULL, " +
                 Personnel.PATH + " TEXT NOT NULL "
+//                        +
+//                CommonKeys.UPDATE + " INTEGER"
             ;
 
             String meta =
@@ -75,6 +77,7 @@ public class PersonnelDao implements ITableDao<Personnel>
         contentValues.put(Personnel.SURNAME, personnel.getSurname());
         contentValues.put(Personnel.PATH, personnel.getPath());
         contentValues.put(Personnel.ROOM_ID, personnel.getRoom().getId());
+//        contentValues.put(CommonKeys.UPDATE, System.currentTimeMillis());
 
         db.insert(Personnel.PERSONNEL, null, contentValues);
 

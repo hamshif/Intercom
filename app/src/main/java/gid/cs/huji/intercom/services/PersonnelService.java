@@ -228,7 +228,6 @@ public class PersonnelService extends IntentService
 
             return builder.toString();
         }
-
     }
 
 
