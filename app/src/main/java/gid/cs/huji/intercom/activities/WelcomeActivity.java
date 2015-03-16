@@ -1,5 +1,7 @@
 package gid.cs.huji.intercom.activities;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -12,7 +14,14 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gid.cs.huji.intercom.services.PersonnelService;
+import gid.cs.huji.intercom.sqlite_db.IntercomDBHelper;
+import gid.cs.huji.intercom.sqlite_db.PersonnelDao;
+import gid.cs.huji.intercom.sqlite_db.RoomDao;
+import gid.interfaces.IBrowsable;
 import gid.util.GidUtil;
 import gid.cs.huji.intercom.fragments.PersonnelFragment;
 import gid.cs.huji.intercom.fragments.BrowseFragment;
@@ -137,6 +146,7 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
         }
     }
 
+
     private class PersonnelHandler extends Handler
     {
         private final String TAG = PersonnelHandler.class.getSimpleName();
@@ -150,18 +160,18 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 
             Log.d(TAG, "received message: " + s);
 
-//            String s = msg.getData().getString("categories");
+            if(s.equals(PersonnelService.MSG_PERSISTED_DATA))
+            {
+                IntercomDBHelper intercomDBHelper = new IntercomDBHelper(WelcomeActivity.this);
+                SQLiteDatabase db = intercomDBHelper.getReadableDatabase();
 
-//            String[] ss = s.split(", ");
-//
-//            for(String sss: ss)
-//            {
-//                Log.d(TAG, "file name is: " + sss);
-//
-//                category_list.add(sss);
-//            }
-//
-//            categoryListAdapter.notifyDataSetChanged();
+                PersonnelDao personnelDao = new PersonnelDao(db);
+
+                ArrayList<Personnel> personnelList = personnelDao.getPersonnelList(null);
+
+                browseFragment.setPersonnelList(personnelList);
+            }
+
         }
     }
 }

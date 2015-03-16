@@ -30,12 +30,12 @@ public class BrowseAdapter extends ArrayAdapter<IBrowsable>
     private PersonnelListener personnelListener;
 
     
-    public BrowseAdapter(Context context, int layoutResourceId, List<IBrowsable> list)
+    public <IB extends IBrowsable> BrowseAdapter(Context context, int layoutResourceId, List<IB> list)
     {
-        super(context, layoutResourceId, list);
+        super(context, layoutResourceId, (List<IBrowsable>)list);
         BrowseAdapter.layoutResourceId = layoutResourceId;
         this.context = context;
-        this.list = list;
+        this.list = (List<IBrowsable>)list;
         personnelListener = new PersonnelListener();
         
         Log.d(TAG, "created browse adapter");

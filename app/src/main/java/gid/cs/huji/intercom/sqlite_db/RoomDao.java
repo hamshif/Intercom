@@ -1,9 +1,15 @@
 package gid.cs.huji.intercom.sqlite_db;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import gid.cs.huji.intercom.model.Personnel;
 import gid.cs.huji.intercom.model.Room;
 import gid.db_util.CommonKeys;
 import gid.interfaces.ITableDao;
@@ -82,11 +88,56 @@ public class RoomDao implements ITableDao<Room>
         Log.i(TAG, "Persisted room in DB");
     }
 
+    @Override
+    public Room getModelObjects(String[] ids)
+    {
+        Room room;
+
+        int _id;
+        int server_id;
+        String building;
+        String wing;
+        int floor;
+        int num;
+        int i_last_update;
+
+        Cursor cursor = db.query(
+                Room.ROOM,
+                ids,
+                null, null, null, null, null
+        );
+
+        cursor.moveToFirst();
+
+
+//        while (!cursor.isAfterLast())
+//        {
+//            cursor.moveToNext();
+            _id = cursor.getInt(cursor.getColumnIndex(CommonKeys._ID));
+            server_id = cursor.getInt(cursor.getColumnIndex(CommonKeys.SERVER_ID));
+            building = cursor.getString(cursor.getColumnIndex(Room.BUILDING));
+            wing = cursor.getString(cursor.getColumnIndex(Room.WING));
+            floor = cursor.getInt(cursor.getColumnIndex(Room.FLOOR));
+            num = cursor.getInt(cursor.getColumnIndex(Room.NUM));
+            i_last_update = cursor.getInt(cursor.getColumnIndex(CommonKeys.LAST_UPDATE));
+
+            room = new Room(_id, server_id, building, wing, floor, num);
+//        }
+
+        return room;
+    }
+
+
+
+
     public void deleteObject(Room room)
     {
         // Delete from DB where id match
         db.delete(Room.ROOM, CommonKeys._ID + " = " + room.getId(), null);
     }
+
+
+
 
 //   public List getPersonnelList()
 //   {

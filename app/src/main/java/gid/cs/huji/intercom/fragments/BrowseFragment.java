@@ -25,21 +25,21 @@ public class BrowseFragment extends ListFragment
 {
     private static final String TAG ="BrowseFragment";
 
-    private static List<IBrowsable> personnelList;
+    private static List<Personnel> personnelList;
 
     private static BrowseAdapter personnel_adapter;
 
     private static ListView lv;
 
-    private List<IBrowsable> getPersonnelList()
+    private List<Personnel> getPersonnelList()
     {
-        List<IBrowsable> l = new ArrayList<IBrowsable>();
+        List<Personnel> l = new ArrayList<Personnel>();
 
         HashMap<Integer, HashMap<String, String>> h_personnel = new HashMap<Integer, HashMap<String, String>>();
 
         String [] peronnel_names =
         {
-            "Danny", "Ely", "Jorge", "Raanan", "Tanya", "Yair", "Chana",
+            "Genesh", "Audin", "Set", "Raanan", "Tanya", "Yair", "Chana",
             "Dima", "Tomer", "Ephraim", "Pavel", "Naama", "Gideon",
         };
 
@@ -51,7 +51,7 @@ public class BrowseFragment extends ListFragment
 
         String [] surnames =
         {
-            "Braniss", "Levi", "Najenson", "Chermoni", "Kuzmitski", "Yarom", "Slutzkin",
+            "India", "Asgard", "Egypt", "Chermoni", "Kuzmitski", "Yarom", "Slutzkin",
             "Surname", "Klainer", "Silverberg", "Gak", "Shemesh", "Bar",
         };
 
@@ -71,7 +71,8 @@ public class BrowseFragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState)
     {
-        personnel_adapter = new BrowseAdapter(inflater.getContext(), R.layout.list_row_item, getPersonnelList());
+        personnelList = getPersonnelList();
+        personnel_adapter = new BrowseAdapter(inflater.getContext(), R.layout.list_row_item, personnelList);
         this.setListAdapter(personnel_adapter);
 
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -113,5 +114,26 @@ public class BrowseFragment extends ListFragment
         Log.d(TAG, "selection: " + selection);
         // Send the event to the host activity
         callback.onArticleSelected(position, personnel);
+    }
+
+    public void setPersonnelList(List<Personnel> personnelList)
+    {
+        if(personnelList.isEmpty())
+        {
+            Personnel p = new Personnel(null, 5, "Mistake", "Empty", "sss"
+                    , new Room(null, 5, "cocus", "Y", 4, 120));
+
+            this.personnelList.add(0, p);
+        }
+        else
+        {
+            this.personnelList.clear();
+            this.personnelList.addAll(personnelList);
+        }
+
+
+        personnel_adapter.notifyDataSetChanged();
+
+        Log.d(TAG, "setPersonnelList");
     }
 }

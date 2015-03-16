@@ -47,6 +47,8 @@ public class PersonnelService extends IntentService
     public static final String PERSONNEL_MESSENGER = "personnel_messenger";
     public static final String PERSONNEL_UPDATE_PROGRESS = "personnel_update_process";
 
+    public static final String MSG_PERSISTED_DATA = "persisted_data";
+
 
     private PersonnelAsync personnelAsync;
     private Messenger personnelMessenger;
@@ -132,7 +134,11 @@ public class PersonnelService extends IntentService
                 personnelDao.persistObject(personnel);
             }
 
-            tellUI("persisted data");
+            tellUI(MSG_PERSISTED_DATA);
+
+
+
+
 
             return null;
         }

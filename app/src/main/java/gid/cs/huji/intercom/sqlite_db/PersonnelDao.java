@@ -1,8 +1,11 @@
 package gid.cs.huji.intercom.sqlite_db;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 import gid.cs.huji.intercom.model.Personnel;
 import gid.cs.huji.intercom.model.Room;
@@ -83,40 +86,102 @@ public class PersonnelDao implements ITableDao<Personnel>
         Log.i(TAG, "Persisted person in DB");
     }
 
+    @Override
+    public Personnel getModelObjects(String[] ids)
+    {
+        ArrayList<Personnel> p_list = new ArrayList<Personnel>();
+
+        Personnel personnel;
+        Room room;
+
+        RoomDao roomDao = new RoomDao(db);
+
+        int _id;
+        int server_id;
+        int room_id;
+        String name;
+        String surname;
+        String path;
+        int i_last_update;
+
+        Cursor cursor = db.rawQuery("SELECT * " + Personnel.PERSONNEL + " WHERE _id = ?", ids);
+        cursor.moveToFirst();
+
+
+//        while (!cursor.isAfterLast())
+//        {
+//            cursor.moveToNext();
+        _id = cursor.getInt(cursor.getColumnIndex(CommonKeys._ID));
+        server_id = cursor.getInt(cursor.getColumnIndex(CommonKeys.SERVER_ID));
+        room_id = cursor.getInt(cursor.getColumnIndex(Personnel.ROOM_ID));
+        name = cursor.getString(cursor.getColumnIndex(CommonKeys.NAME));
+        surname = cursor.getString(cursor.getColumnIndex(Personnel.SURNAME));
+        path = cursor.getString(cursor.getColumnIndex(Personnel.PATH));
+        i_last_update = cursor.getInt(cursor.getColumnIndex(CommonKeys.LAST_UPDATE));
+
+        room = roomDao.getModelObjects(new String[]{"" + room_id});
+
+        personnel = new Personnel(_id, server_id, name, surname, path, room);
+//        }
+
+        return personnel;
+    }
+
     public void deleteObject(Personnel personnel)
     {
         // Delete from DB where id match
         db.delete(Room.ROOM, CommonKeys._ID + " = " + personnel.getId(), null);
     }
 
-//   public List getPersonnelList()
-//   {
-//	   Log.i(TAG, "trying to get result from db");
-//
-//       List resultList = new ArrayList();
-//
-//       // Name of the columns we want to select
-//       String[] tableColumns = new String[] {"id","category"};
-//
-//       // Query the database
-//       Cursor cursor = db.query("results", tableColumns, null, null, null, null, null);
-//       cursor.moveToFirst();
-//
-//       // Iterate the results
-//       while (!cursor.isAfterLast())
-//       {
-//           PersonnelDB result = new PersonnelDB();
-//           // Take values from the DB
-//           result.setId(cursor.getInt(0));
-//           result.setCategory(cursor.getString(1));
-//
-//           // Add to the DB
-//           resultList.add(result);
-//
-//           // Move to the next result
-//           cursor.moveToNext();
-//       }
-//
-//       return resultList;
-//   }
+
+    public ArrayList<Personnel> getPersonnelList(String[] ids)
+    {
+        ArrayList<Personnel> personnel_l = new ArrayList<Personnel>();
+
+        Personnel personnel;
+        Room room;
+
+        RoomDao roomDao = new RoomDao(db);
+
+        int _id;
+        int server_id;
+        int room_id;
+        String name;
+        String surname;
+        String path;
+        int i_last_update;
+
+        try
+        {
+            String q = "SELECT * FROM " + Personnel.PERSONNEL;
+
+            Cursor cursor = db.rawQuery(q, ids);
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast())
+            {
+                    cursor.moveToNext();
+                _id = cursor.getInt(cursor.getColumnIndex(CommonKeys._ID));
+                server_id = cursor.getInt(cursor.getColumnIndex(CommonKeys.SERVER_ID));
+                room_id = cursor.getInt(cursor.getColumnIndex(Personnel.ROOM_ID));
+                name = cursor.getString(cursor.getColumnIndex(CommonKeys.NAME));
+                surname = cursor.getString(cursor.getColumnIndex(Personnel.SURNAME));
+                path = cursor.getString(cursor.getColumnIndex(Personnel.PATH));
+                i_last_update = cursor.getInt(cursor.getColumnIndex(CommonKeys.LAST_UPDATE));
+
+                room = roomDao.getModelObjects(new String[]{"" + room_id});
+
+                personnel = new Personnel(_id, server_id, name, surname, path, room);
+
+                personnel_l.add(personnel);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "", e);
+        }
+
+
+        return personnel_l;
+    }
 }
