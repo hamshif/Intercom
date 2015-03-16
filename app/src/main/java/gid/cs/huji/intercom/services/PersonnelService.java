@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -41,9 +44,12 @@ public class PersonnelService extends IntentService
     public static final String PROPERTY_QUERY = "PROPERTY_QUERY";
 
     private static final String SERVER_URL = "http://e-10:8000/intercom/personnel_map";
+    public static final String PERSONNEL_MESSENGER = "personnel_messenger";
+    public static final String PERSONNEL_UPDATE_PROGRESS = "personnel_update_process";
 
 
     private PersonnelAsync personnelAsync;
+    private Messenger personnelMessenger;
 
 
     public PersonnelService()
@@ -62,10 +68,11 @@ public class PersonnelService extends IntentService
 
         Bundle bundle = intent.getExtras().getBundle(PERSONNEL_BUNDLE);
 
-        String type = bundle.getString(PROPERTY_QUERY_TYPE);
+        String query = bundle.getString(PROPERTY_QUERY_TYPE);
 
+        personnelMessenger = (Messenger) intent.getExtras().get(PERSONNEL_MESSENGER);
 
-        personnelAsync.doInBackground(new String[]{"searchQuery", type});
+        personnelAsync.doInBackground(new String[]{"searchQuery", query});
 
     }
 
@@ -86,19 +93,21 @@ public class PersonnelService extends IntentService
 
             Log.d(TAG, "This is the result of the get: " + s);
 
+            tellUI("got data");
 
             JsonToPersonnel jsonToPersonnel = new JsonToPersonnel();
             HashMap<String, Object> personnelMap = jsonToPersonnel.deserialize(s);
 
-            //TODO remove this it's only for debugging!!!
-            try
-            {
-                context.deleteDatabase(IntercomDBHelper.DB_NAME);
-            }
-            catch (Exception e)
-            {
-                Log.e(TAG, "", e);
-            }
+            tellUI("deserialized json");
+//            //TODO remove this it's only for debugging!!!
+//            try
+//            {
+//                context.deleteDatabase(IntercomDBHelper.DB_NAME);
+//            }
+//            catch (Exception e)
+//            {
+//                Log.e(TAG, "", e);
+//            }
 
             IntercomDBHelper intercomDBHelper = new IntercomDBHelper(context);
             SQLiteDatabase db = intercomDBHelper.getWritableDatabase();
@@ -123,6 +132,7 @@ public class PersonnelService extends IntentService
                 personnelDao.persistObject(personnel);
             }
 
+            tellUI("persisted data");
 
             return null;
         }
@@ -236,6 +246,27 @@ public class PersonnelService extends IntentService
             }
 
             return builder.toString();
+        }
+    }
+
+    private void tellUI(String msg)
+    {
+        Bundle bundle = new Bundle();
+        bundle.putString(PERSONNEL_UPDATE_PROGRESS, msg);
+
+        Log.d(TAG , "got here1");
+
+        Message message = new Message();
+        message.setData(bundle);
+
+        try
+        {
+            personnelMessenger.send(message);
+        }
+        catch (RemoteException e)
+        {
+            // TODO Auto-generated catch block
+            Log.e(TAG, "", e);
         }
     }
 

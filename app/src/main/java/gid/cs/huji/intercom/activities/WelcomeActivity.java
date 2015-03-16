@@ -1,5 +1,9 @@
 package gid.cs.huji.intercom.activities;
 
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
@@ -67,8 +71,8 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 
         intent.putExtra(PersonnelService.PERSONNEL_BUNDLE, bundle);
 
-//        Messenger uiMessenger = new Messenger(new SearchHandler());
-//        intent.putExtra(CATEGORY_SEARCH_MESSANGER, uiMessenger);
+        Messenger uiMessenger = new Messenger(new PersonnelHandler());
+        intent.putExtra(PersonnelService.PERSONNEL_MESSENGER, uiMessenger);
 
         startService(intent);
 
@@ -130,6 +134,34 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
         if(personnelFragment != null)
         {
             personnelFragment.setPersonnel(personnel);
+        }
+    }
+
+    private class PersonnelHandler extends Handler
+    {
+        private final String TAG = PersonnelHandler.class.getSimpleName();
+
+        @Override
+        public void handleMessage(Message msg)
+        {
+            super.handleMessage(msg);
+
+            String s = msg.getData().getString(PersonnelService.PERSONNEL_UPDATE_PROGRESS);
+
+            Log.d(TAG, "received message: " + s);
+
+//            String s = msg.getData().getString("categories");
+
+//            String[] ss = s.split(", ");
+//
+//            for(String sss: ss)
+//            {
+//                Log.d(TAG, "file name is: " + sss);
+//
+//                category_list.add(sss);
+//            }
+//
+//            categoryListAdapter.notifyDataSetChanged();
         }
     }
 }
