@@ -37,7 +37,7 @@ public class JsonToPersonnel
             JsonObject jo_rooms = jo_map.get("rooms").getAsJsonObject();
             JsonArray ja_id_order = jo_map.get(Personnel.ID_ORDER).getAsJsonArray();
             JsonObject jo_personnel = jo_map.get(Personnel.PERSONNEL).getAsJsonObject();
-            String s_date = jo_map.get(CommonKeys.UPDATE).getAsString();
+            String s_date = jo_map.get(CommonKeys.LAST_UPDATE).getAsString();
 
             Gson gson = new Gson();
 

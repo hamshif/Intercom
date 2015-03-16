@@ -34,13 +34,13 @@ public class RoomDao implements ITableDao<Room>
         try
         {
             String columns =
-                CommonKeys._ID + " INTEGER PRIMARY KEY, " +
-                "server_id INTEGER, " +
+                CommonKeys._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                CommonKeys.SERVER_ID + " INTEGER, " +
                 Room.BUILDING + " TEXT NOT NULL, " +
                 Room.WING + " TEXT NOT NULL, " +
                 Room.FLOOR + " INTEGER NOT NULL, " +
-                Room.NUM + " INTEGER NOT NULL "
-
+                Room.NUM + " INTEGER NOT NULL, " +
+                CommonKeys.LAST_UPDATE + " INTEGER"
             ;
 
             String meta =
@@ -75,11 +75,11 @@ public class RoomDao implements ITableDao<Room>
         contentValues.put(Room.WING, room.getWing());
         contentValues.put(Room.FLOOR, room.getFloor());
         contentValues.put(Room.NUM, room.getNum());
-//        contentValues.put(CommonKeys.UPDATE, System.currentTimeMillis());
+        contentValues.put(CommonKeys.LAST_UPDATE, System.currentTimeMillis());
 
         db.insert(Room.ROOM, null, contentValues);
 
-        Log.i(TAG, "Persisted person in DB");
+        Log.i(TAG, "Persisted room in DB");
     }
 
     public void deleteObject(Room room)

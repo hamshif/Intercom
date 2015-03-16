@@ -90,6 +90,15 @@ public class PersonnelService extends IntentService
             JsonToPersonnel jsonToPersonnel = new JsonToPersonnel();
             HashMap<String, Object> personnelMap = jsonToPersonnel.deserialize(s);
 
+            //TODO remove this it's only for debugging!!!
+            try
+            {
+                context.deleteDatabase(IntercomDBHelper.DB_NAME);
+            }
+            catch (Exception e)
+            {
+                Log.e(TAG, "", e);
+            }
 
             IntercomDBHelper intercomDBHelper = new IntercomDBHelper(context);
             SQLiteDatabase db = intercomDBHelper.getWritableDatabase();

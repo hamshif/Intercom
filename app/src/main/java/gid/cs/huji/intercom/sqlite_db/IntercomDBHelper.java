@@ -17,6 +17,8 @@ public class IntercomDBHelper extends SQLiteOpenHelper
    public IntercomDBHelper(Context context)
    {
        super(context, DB_NAME, null, 1);
+
+
    }
 
 
@@ -46,5 +48,8 @@ public class IntercomDBHelper extends SQLiteOpenHelper
 
        onCreate(db);
    }
+
+
+
 }
 	
