@@ -101,7 +101,7 @@ public class PersonnelService extends IntentService
             HashMap<String, Object> personnelMap = jsonToPersonnel.deserialize(s);
 
             tellUI("deserialized json");
-//            //TODO remove this it's only for debugging!!!
+////            //TODO remove this it's only for debugging!!!
 //            try
 //            {
 //                context.deleteDatabase(IntercomDBHelper.DB_NAME);
@@ -122,9 +122,12 @@ public class PersonnelService extends IntentService
 
             HashMap<Integer, Room> rooms = (HashMap)personnelMap.get(Room.ROOMS);
 
+            Room per_room;
+
             for (Map.Entry<Integer, Room> entry : rooms.entrySet())
             {
-                roomDao.persistObject(entry.getValue());
+                per_room = roomDao.persistObject(entry.getValue());
+                entry.setValue(per_room);
             }
 
             ArrayList<Personnel> personnel_list = (ArrayList)personnelMap.get(Personnel.PERSONNELS);
@@ -135,9 +138,6 @@ public class PersonnelService extends IntentService
             }
 
             tellUI(MSG_PERSISTED_DATA);
-
-
-
 
 
             return null;

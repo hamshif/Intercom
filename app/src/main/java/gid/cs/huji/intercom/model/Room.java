@@ -31,7 +31,13 @@ public class Room implements IBrowsable
         this.num = num;
     }
 
-    public Integer getId() {
+    public Integer getId()
+    {
+        if(id==null || id == 0)
+        {
+
+        }
+
         return id;
     }
 
@@ -68,5 +74,9 @@ public class Room implements IBrowsable
     @Override
     public String getBrowseText() {
         return this.getName();
+    }
+
+    public void setId(long id) {
+        this.id = (int)id;
     }
 }

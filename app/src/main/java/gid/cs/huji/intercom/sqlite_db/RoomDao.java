@@ -68,10 +68,10 @@ public class RoomDao implements ITableDao<Room>
 
     public void dropTable()
     {
-        db.execSQL("DROP TABLE IF EXISTS " + Room.ROOM);
+        db.execSQL("DROP TABLE IF EXISTS " + Room.ROOM + ";");
     }
 
-    public void persistObject(Room room)
+    public Room persistObject(Room room)
     {
         Log.i(TAG, "trying to insert room to db");
 
@@ -83,15 +83,21 @@ public class RoomDao implements ITableDao<Room>
         contentValues.put(Room.NUM, room.getNum());
         contentValues.put(CommonKeys.LAST_UPDATE, System.currentTimeMillis());
 
-        db.insert(Room.ROOM, null, contentValues);
+        long a = db.insert(Room.ROOM, null, contentValues);
+
+        Log.d(TAG, room.getBrowseText() + " id: " + a);
+
+        room.setId(a);
 
         Log.i(TAG, "Persisted room in DB");
+
+        return room;
     }
 
     @Override
     public Room getModelObjects(String[] ids)
     {
-        Room room;
+        Room room = null;
 
         int _id;
         int server_id;
@@ -101,18 +107,19 @@ public class RoomDao implements ITableDao<Room>
         int num;
         int i_last_update;
 
-        Cursor cursor = db.query(
-                Room.ROOM,
-                ids,
-                null, null, null, null, null
-        );
+        String q = "SELECT * FROM " + Room.ROOM + " WHERE " + CommonKeys._ID + " = " + ids[0] + ";";
+        Log.d(TAG, "query: " + q);
+        Cursor cursor = db.rawQuery(q, null);
 
         cursor.moveToFirst();
 
+        while (!cursor.isAfterLast())
+        {
+            for(String s: cursor.getColumnNames())
+            {
+                Log.i(TAG, "room table column: " + s);
+            }
 
-//        while (!cursor.isAfterLast())
-//        {
-//            cursor.moveToNext();
             _id = cursor.getInt(cursor.getColumnIndex(CommonKeys._ID));
             server_id = cursor.getInt(cursor.getColumnIndex(CommonKeys.SERVER_ID));
             building = cursor.getString(cursor.getColumnIndex(Room.BUILDING));
@@ -122,11 +129,15 @@ public class RoomDao implements ITableDao<Room>
             i_last_update = cursor.getInt(cursor.getColumnIndex(CommonKeys.LAST_UPDATE));
 
             room = new Room(_id, server_id, building, wing, floor, num);
-//        }
+
+
+            //TODO put this in a list only the last value is returned
+
+            cursor.moveToNext();
+        }
 
         return room;
     }
-
 
 
 

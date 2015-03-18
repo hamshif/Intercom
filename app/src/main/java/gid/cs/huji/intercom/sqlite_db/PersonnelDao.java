@@ -66,10 +66,10 @@ public class PersonnelDao implements ITableDao<Personnel>
 
     public void dropTable()
     {
-        db.execSQL("DROP TABLE IF EXISTS " + Personnel.PERSONNEL);
+        db.execSQL("DROP TABLE IF EXISTS " + Personnel.PERSONNEL  + ";");
     }
 
-    public void persistObject(Personnel personnel)
+    public Personnel persistObject(Personnel personnel)
     {
         Log.i(TAG, "trying to insert personnel to db");
 
@@ -81,9 +81,12 @@ public class PersonnelDao implements ITableDao<Personnel>
         contentValues.put(Personnel.ROOM_ID, personnel.getRoom().getId());
         contentValues.put(CommonKeys.LAST_UPDATE, System.currentTimeMillis());
 
-        db.insert(Personnel.PERSONNEL, null, contentValues);
+        long id = db.insert(Personnel.PERSONNEL, null, contentValues);
+        personnel.setId(id);
 
         Log.i(TAG, "Persisted person in DB");
+
+        return personnel;
     }
 
     @Override
@@ -104,7 +107,7 @@ public class PersonnelDao implements ITableDao<Personnel>
         String path;
         int i_last_update;
 
-        Cursor cursor = db.rawQuery("SELECT * " + Personnel.PERSONNEL + " WHERE _id = ?", ids);
+        Cursor cursor = db.rawQuery("SELECT * " + Personnel.PERSONNEL + " WHERE " + CommonKeys._ID + " = ?", ids);
         cursor.moveToFirst();
 
 
@@ -153,14 +156,13 @@ public class PersonnelDao implements ITableDao<Personnel>
 
         try
         {
-            String q = "SELECT * FROM " + Personnel.PERSONNEL;
+            String q = "SELECT * FROM " + Personnel.PERSONNEL + " WHERE " + CommonKeys._ID + " >0" + ";";
 
             Cursor cursor = db.rawQuery(q, ids);
             cursor.moveToFirst();
 
             while (!cursor.isAfterLast())
             {
-                    cursor.moveToNext();
                 _id = cursor.getInt(cursor.getColumnIndex(CommonKeys._ID));
                 server_id = cursor.getInt(cursor.getColumnIndex(CommonKeys.SERVER_ID));
                 room_id = cursor.getInt(cursor.getColumnIndex(Personnel.ROOM_ID));
@@ -174,6 +176,9 @@ public class PersonnelDao implements ITableDao<Personnel>
                 personnel = new Personnel(_id, server_id, name, surname, path, room);
 
                 personnel_l.add(personnel);
+
+
+                cursor.moveToNext();
             }
         }
         catch (Exception e)

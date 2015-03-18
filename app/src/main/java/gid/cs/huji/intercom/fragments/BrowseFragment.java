@@ -39,7 +39,7 @@ public class BrowseFragment extends ListFragment
 
         String [] peronnel_names =
         {
-            "Genesh", "Audin", "Set", "Raanan", "Tanya", "Yair", "Chana",
+            "Audin", "Genesh", "Zeus", "Raanan", "Tanya", "Yair", "Chana",
             "Dima", "Tomer", "Ephraim", "Pavel", "Naama", "Gideon",
         };
 
@@ -51,7 +51,7 @@ public class BrowseFragment extends ListFragment
 
         String [] surnames =
         {
-            "India", "Asgard", "Egypt", "Chermoni", "Kuzmitski", "Yarom", "Slutzkin",
+            "Asgard", "Nirvana", "Olympus", "Chermoni", "Kuzmitski", "Yarom", "Slutzkin",
             "Surname", "Klainer", "Silverberg", "Gak", "Shemesh", "Bar",
         };
 

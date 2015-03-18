@@ -69,4 +69,9 @@ public class Personnel implements IBrowsable
     public String getPath() {
         return path;
     }
+
+
+    public void setId(long id) {
+        this.id = (int)id;
+    }
 }
