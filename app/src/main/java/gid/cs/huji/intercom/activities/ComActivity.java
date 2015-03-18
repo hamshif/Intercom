@@ -3,23 +3,37 @@ package gid.cs.huji.intercom.activities;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.XWalkView;
 
 import gid.cs.huji.intercom.R;
+import gid.cs.huji.intercom.model.Personnel;
+import gid.cs.huji.intercom.services.PersonnelService;
+
 /**
  * Created by gideonbar on 08/03/15.
  */
 public class ComActivity extends Activity
 {
     private XWalkView xWalkWebView;
+    private static final String TAG = ComActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         setContentView(R.layout.activity_com);
+
+        Bundle bundle = this.getIntent().getExtras().getBundle(PersonnelService.PERSONNEL_BUNDLE);
+
+        String s_personnel = bundle.getString(Personnel.PERSONNEL);
+
+
+        Log.d(TAG, s_personnel);
+
+
 
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
         xWalkWebView.clearCache(true);

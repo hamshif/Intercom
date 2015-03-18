@@ -14,6 +14,7 @@ import android.widget.TextView;
 import gid.cs.huji.intercom.activities.ComActivity;
 import gid.cs.huji.intercom.R;
 import gid.cs.huji.intercom.model.Personnel;
+import gid.cs.huji.intercom.services.PersonnelService;
 
 public class PersonnelFragment extends Fragment
 {
@@ -46,6 +47,16 @@ public class PersonnelFragment extends Fragment
     private void call()
     {
         Intent intent = new Intent(this.getActivity(), ComActivity.class);
+
+        Bundle bundle = new Bundle();
+
+        String s_personnel = personnel.getBrowseText();
+
+        bundle.putString(Personnel.PERSONNEL, s_personnel);
+
+        intent.putExtra(PersonnelService.PERSONNEL_BUNDLE, bundle);
+
+
         startActivity(intent);
     }
 
