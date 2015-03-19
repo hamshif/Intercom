@@ -10,6 +10,7 @@ import org.xwalk.core.XWalkView;
 
 import gid.cs.huji.intercom.R;
 import gid.cs.huji.intercom.model.Personnel;
+import gid.cs.huji.intercom.serializables.SPersonnel;
 import gid.cs.huji.intercom.services.PersonnelService;
 
 /**
@@ -28,12 +29,11 @@ public class ComActivity extends Activity
 
         Bundle bundle = this.getIntent().getExtras().getBundle(PersonnelService.PERSONNEL_BUNDLE);
 
-        String s_personnel = bundle.getString(Personnel.PERSONNEL);
+//        String s_personnel = bundle.getString(Personnel.PERSONNEL);
+//        Log.d(TAG, s_personnel);
 
-
-        Log.d(TAG, s_personnel);
-
-
+        SPersonnel personnel = (SPersonnel)bundle.getSerializable(Personnel.PERSONNEL);
+        Log.d(TAG + "Mahte", personnel.getBrowseText());
 
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
         xWalkWebView.clearCache(true);

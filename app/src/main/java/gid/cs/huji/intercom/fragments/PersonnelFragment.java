@@ -10,11 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import gid.cs.huji.intercom.activities.ComActivity;
 import gid.cs.huji.intercom.R;
 import gid.cs.huji.intercom.model.Personnel;
+import gid.cs.huji.intercom.model.Room;
+import gid.cs.huji.intercom.serializables.SPersonnel;
+import gid.cs.huji.intercom.serializables.SRoom;
 import gid.cs.huji.intercom.services.PersonnelService;
+import gid.util.GidUtil;
+
 
 public class PersonnelFragment extends Fragment
 {
@@ -50,9 +56,26 @@ public class PersonnelFragment extends Fragment
 
         Bundle bundle = new Bundle();
 
+        if(personnel == null)
+        {
+            GidUtil gidUtil = new GidUtil();
+
+            gidUtil.tellUser(this.getActivity(), "Call Who?", Toast.LENGTH_LONG);
+
+            return;
+        }
+
         String s_personnel = personnel.getBrowseText();
 
-        bundle.putString(Personnel.PERSONNEL, s_personnel);
+//        bundle.putString(Personnel.PERSONNEL, s_personnel);
+
+        Room r = personnel.getRoom();
+
+        SRoom sRoom = new SRoom(r.getId(), r.getServer_id(), r.getBuilding(), r.getWing(), r.getFloor(), r.getNum());
+
+        SPersonnel sPersonnel = new SPersonnel(personnel.getId(), personnel.getServerId(), personnel.getName(), personnel.getSurname(), personnel.getPath(), sRoom);
+
+        bundle.putSerializable(Personnel.PERSONNEL, s_personnel);
 
         intent.putExtra(PersonnelService.PERSONNEL_BUNDLE, bundle);
 

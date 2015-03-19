@@ -58,7 +58,7 @@ public class GidUtil
 		return exists;
 	}
 
-	public static void sendMessageToUser(Context context, String message, int duration)
+	public static void tellUser(Context context, String message, int duration)
 	{
 		t = Toast.makeText(context, message, duration);
 		t.setGravity(Gravity.CENTER| Gravity.CENTER, 0, 0);
