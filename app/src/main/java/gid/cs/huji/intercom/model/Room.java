@@ -1,11 +1,13 @@
 package gid.cs.huji.intercom.model;
 
+import java.io.Serializable;
+
 import gid.interfaces.IBrowsable;
 
 /**
  * Created by gideonbar on 11/03/15.
  */
-public class Room implements IBrowsable
+public class Room implements IBrowsable, Serializable
 {
     public static final String ROOM = "room";
     public static final String BUILDING = "building";
@@ -21,6 +23,9 @@ public class Room implements IBrowsable
     private String wing;
     private int floor;
     private int num;
+
+    public Room(){}
+
 
     public Room(Integer id, int server_id, String building, String wing, int floor, int num) {
         this.id = id;

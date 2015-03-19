@@ -1,9 +1,11 @@
 package gid.cs.huji.intercom.model;
 
+import java.io.Serializable;
+
 import gid.db_util.CommonKeys;
 import gid.interfaces.IBrowsable;
 
-public class Personnel implements IBrowsable
+public class Personnel implements IBrowsable, Serializable
 {
 
     public static final String PERSONNEL = "personnel";
@@ -20,6 +22,10 @@ public class Personnel implements IBrowsable
     private String surname;
     private String path;
     private Room room;
+
+    public Personnel(){}
+
+
 
     public Personnel(Integer id, int server_id, String name, String surname, String path, Room room)
     {
