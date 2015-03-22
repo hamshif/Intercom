@@ -32,7 +32,7 @@ import gid.cs.huji.intercom.R;
 /**
  * Created by gideonbar on 08/03/15.
  */
-public class WelcomeActivity extends FragmentActivity implements BrowseFragment.BrowseFragmentListener
+public class WelcomeActivity extends FragmentActivity implements BrowseFragment.BrowseFragmentListener, PersonnelFragment.PersonnelFragmentListener
 {
     private static final String TAG = WelcomeActivity.class.getSimpleName();
 
@@ -44,8 +44,6 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
     private PersonnelFragment personnelFragment;
     private BrowseFragment browseFragment;
     private HeaderFragment headerFragment;
-
-    private static ImageView iv_call;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -152,13 +150,26 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 //        toast.show();
 
         if(personnelFragment != null)
-        {        
+        {
             fm.beginTransaction()
 //            .setCustomAnimations(android.R.animator., android.R.animator.fade_out)
                 .show(personnelFragment)
                 .commit();
             personnelFragment.setPersonnel(personnel);
         }
+    }
+
+    @Override
+    public void toggle()
+    {
+        if(personnelFragment != null)
+        {
+            fm.beginTransaction()
+//            .setCustomAnimations(android.R.animator., android.R.animator.fade_out)
+                .hide(personnelFragment)
+                .commit();
+        }
+
     }
 
 

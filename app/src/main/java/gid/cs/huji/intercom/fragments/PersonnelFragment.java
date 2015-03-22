@@ -1,5 +1,6 @@
 package gid.cs.huji.intercom.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,11 @@ public class PersonnelFragment extends Fragment
 {
     private static final String TAG = PersonnelFragment.class.getSimpleName();
 
-    private static LinearLayout ll_call;
+    private PersonnelFragmentListener callback;
+
+
+    private static ImageView iv_toggle;
+    private static ImageView iv_bell;
     private Personnel personnel;
 
     @Nullable
@@ -33,9 +38,21 @@ public class PersonnelFragment extends Fragment
         View view = inflater.inflate(R.layout.personnel, container, false);
 
 
-        ll_call = (LinearLayout) view.findViewById(R.id.ll_call);
+        iv_toggle = (ImageView) view.findViewById(R.id.iv_toggle);
 
-        ll_call.setOnClickListener(new View.OnClickListener() {
+        iv_toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                Log.d(TAG, "famfasta");
+                callback.toggle();
+            }
+        });
+
+
+        iv_bell = (ImageView) view.findViewById(R.id.iv_bell);
+
+        iv_bell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -77,5 +94,30 @@ public class PersonnelFragment extends Fragment
 
         TextView tv_room = (TextView) getView().findViewById(R.id.tv_room);
         tv_room.setText(personnel.getRoom().getBrowseText());
+    }
+
+
+    public interface PersonnelFragmentListener
+    {
+        public void toggle();
+    }
+
+
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try
+        {
+            callback = (PersonnelFragmentListener) activity;
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(activity.toString()
+                    + " must implement" + this.getClass().getSimpleName());
+        }
     }
 }

@@ -10,6 +10,27 @@
     android:background="@color/blue"
      >
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        >
+
+        <ImageView
+            android:id="@+id/iv_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/toggle"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:layout_alignParentRight="true"
+            />
+
+        </RelativeLayout>
+
+
     <TextView 
         android:id="@+id/tv_header"
         android:layout_width="match_parent"
@@ -19,7 +40,7 @@
         android:textSize="40dp"
         android:text="Ploni Almoni"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
         />
 
@@ -34,7 +55,7 @@
     <TextView
         android:id="@+id/tv_room"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="40dp"
