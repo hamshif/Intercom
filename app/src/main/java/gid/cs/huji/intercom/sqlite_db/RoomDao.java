@@ -5,11 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import gid.cs.huji.intercom.model.Personnel;
 import gid.cs.huji.intercom.model.Room;
 import gid.db_util.CommonKeys;
 import gid.interfaces.ITableDao;
@@ -51,6 +48,7 @@ public class RoomDao implements ITableDao<Room>
 
             String meta =
                 "UNIQUE(" + Room.BUILDING + ", " + Room.WING + ", " + Room.FLOOR + ", " + Room.NUM + ") ON CONFLICT REPLACE ";
+//                "UNIQUE(" + Room.BUILDING + ", " + Room.WING + ", " + Room.FLOOR + ", " + Room.NUM + ")";
 
             db.execSQL
             (
@@ -140,6 +138,63 @@ public class RoomDao implements ITableDao<Room>
     }
 
 
+    public HashMap<Integer, Room> getIDHash(String[] ids)
+    {
+        HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
+        Room room = null;
+
+        int _id;
+        int server_id;
+        String building;
+        String wing;
+        int floor;
+        int num;
+        int i_last_update;
+
+        String q = "SELECT * FROM " + Room.ROOM;
+
+        if(ids != null && ids.length > 0)
+        {
+            q +=  " WHERE " + CommonKeys._ID + "=?";
+        }
+
+
+        Log.d(TAG, "query: " + q);
+        Cursor cursor = db.rawQuery(q, ids);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast())
+        {
+//            for(String s: cursor.getColumnNames())
+//            {
+//                Log.i(TAG, "room table column: " + s);
+//            }
+
+            _id = cursor.getInt(cursor.getColumnIndex(CommonKeys._ID));
+            server_id = cursor.getInt(cursor.getColumnIndex(CommonKeys.SERVER_ID));
+            building = cursor.getString(cursor.getColumnIndex(Room.BUILDING));
+            wing = cursor.getString(cursor.getColumnIndex(Room.WING));
+            floor = cursor.getInt(cursor.getColumnIndex(Room.FLOOR));
+            num = cursor.getInt(cursor.getColumnIndex(Room.NUM));
+            i_last_update = cursor.getInt(cursor.getColumnIndex(CommonKeys.LAST_UPDATE));
+
+
+            room = new Room(_id, server_id, building, wing, floor, num);
+
+            Log.d(TAG, "id: " + _id + " Room: " + room.getBrowseText());
+
+            rooms.put(_id, room);
+
+            //TODO put this in a list only the last value is returned
+
+            cursor.moveToNext();
+        }
+
+        return rooms;
+    }
+
+
 
     public void deleteObject(Room room)
     {
@@ -147,37 +202,4 @@ public class RoomDao implements ITableDao<Room>
         db.delete(Room.ROOM, CommonKeys._ID + " = " + room.getId(), null);
     }
 
-
-
-
-//   public List getPersonnelList()
-//   {
-//	   Log.i(TAG, "trying to get result from db");
-//
-//       List resultList = new ArrayList();
-//
-//       // Name of the columns we want to select
-//       String[] tableColumns = new String[] {"id","category"};
-//
-//       // Query the database
-//       Cursor cursor = db.query("results", tableColumns, null, null, null, null, null);
-//       cursor.moveToFirst();
-//
-//       // Iterate the results
-//       while (!cursor.isAfterLast())
-//       {
-//           PersonnelDB result = new PersonnelDB();
-//           // Take values from the DB
-//           result.setId(cursor.getInt(0));
-//           result.setCategory(cursor.getString(1));
-//
-//           // Add to the DB
-//           resultList.add(result);
-//
-//           // Move to the next result
-//           cursor.moveToNext();
-//       }
-//
-//       return resultList;
-//   }
 }

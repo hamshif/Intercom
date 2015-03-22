@@ -62,11 +62,8 @@ public class PersonnelFragment extends Fragment
             return;
         }
 
-
         bundle.putSerializable(Personnel.PERSONNEL, personnel);
-
         intent.putExtra(PersonnelService.PERSONNEL_BUNDLE, bundle);
-
 
         startActivity(intent);
     }

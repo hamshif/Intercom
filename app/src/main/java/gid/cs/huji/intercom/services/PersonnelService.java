@@ -115,14 +115,32 @@ public class PersonnelService extends IntentService
             SQLiteDatabase db = intercomDBHelper.getWritableDatabase();
 
             RoomDao roomDao = new RoomDao(db);
-            roomDao.createTable();
-
             PersonnelDao personnelDao = new PersonnelDao(db);
+
+////            //TODO remove this it's only for debugging!!!
+//            try
+//            {
+//                roomDao.dropTable();
+//                personnelDao.dropTable();
+//            }
+//            catch (Exception e)
+//            {
+//                Log.e(TAG, "", e);
+//            }
+
+
+
+
+            roomDao.createTable();
             personnelDao.createTable();
 
             HashMap<Integer, Room> rooms = (HashMap)personnelMap.get(Room.ROOMS);
 
             Room per_room;
+
+
+            //TODO create update necessity logic and model in server to abide a less brutal approach
+
 
             for (Map.Entry<Integer, Room> entry : rooms.entrySet())
             {

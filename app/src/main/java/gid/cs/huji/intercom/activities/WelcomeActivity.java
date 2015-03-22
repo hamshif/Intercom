@@ -1,27 +1,27 @@
 package gid.cs.huji.intercom.activities;
 
-import android.database.Cursor;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
+import gid.cs.huji.intercom.model.Room;
 import gid.cs.huji.intercom.services.PersonnelService;
 import gid.cs.huji.intercom.sqlite_db.IntercomDBHelper;
 import gid.cs.huji.intercom.sqlite_db.PersonnelDao;
 import gid.cs.huji.intercom.sqlite_db.RoomDao;
-import gid.interfaces.IBrowsable;
 import gid.util.GidUtil;
 import gid.cs.huji.intercom.fragments.PersonnelFragment;
 import gid.cs.huji.intercom.fragments.BrowseFragment;
@@ -35,6 +35,9 @@ import gid.cs.huji.intercom.R;
 public class WelcomeActivity extends FragmentActivity implements BrowseFragment.BrowseFragmentListener
 {
     private static final String TAG = WelcomeActivity.class.getSimpleName();
+
+    FragmentManager fm;
+
 
     private FrameLayout onScreen;
 
@@ -94,26 +97,34 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 
     private void createGUI()
     {
+        fm = getSupportFragmentManager();
+
         onScreen = (FrameLayout) getLayoutInflater().inflate(R.layout.intercom, null);
 //        LinearLayout onScreen = (LinearLayout) getLayoutInflater().inflate(R.layout.intercom, null);
         setContentView(onScreen);
 
         personnelFragment = new PersonnelFragment();
         personnelFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, personnelFragment).commit();
+        fm.beginTransaction().add(R.id.fragment_container, personnelFragment).commit();
 
 //            LinearLayout ll = (LinearLayout) getLayoutInflater().inflate(R.layout.list_browse, null);
 //            onScreen.addView(ll);
 
         browseFragment = new BrowseFragment();
         browseFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction().add(R.id.list_container, browseFragment).commit();
+        fm.beginTransaction().add(R.id.list_container, browseFragment).commit();
 
 
 
         headerFragment = new HeaderFragment();
         headerFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, headerFragment).commit();
+        fm.beginTransaction().add(R.id.fragment_container, headerFragment).commit();
+
+        fm.beginTransaction()
+//            .setCustomAnimations(android.R.animator., android.R.animator.fade_out)
+            .hide(personnelFragment)
+            .commit();
+
     }
 
 
@@ -141,7 +152,11 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
 //        toast.show();
 
         if(personnelFragment != null)
-        {
+        {        
+            fm.beginTransaction()
+//            .setCustomAnimations(android.R.animator., android.R.animator.fade_out)
+                .show(personnelFragment)
+                .commit();
             personnelFragment.setPersonnel(personnel);
         }
     }
@@ -170,7 +185,16 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
                 ArrayList<Personnel> personnelList = personnelDao.getPersonnelList(null);
 
                 browseFragment.setPersonnelList(personnelList);
+
+                //TODO test all rooms to see how many id's
+
+                RoomDao roomDao = new RoomDao(db);
+
+                HashMap<Integer, Room> rooms = roomDao.getIDHash(null);
+
             }
+
+
 
         }
     }

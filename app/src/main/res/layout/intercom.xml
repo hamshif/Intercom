@@ -9,7 +9,7 @@
         android:id="@+id/list_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="800dp"
         android:layout_weight="1"
         android:layout_marginTop="@dimen/com_activity_unit"
     >
