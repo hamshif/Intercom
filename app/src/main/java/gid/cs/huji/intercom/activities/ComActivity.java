@@ -41,7 +41,7 @@ public class ComActivity extends Activity{
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);
 
         xWalkView=(XWalkView)findViewById(R.id.xwalkWebView);
-        xWalkView.addJavascriptInterface(new JS_Com_Bind(this, xWalkView), "Android");
+        xWalkView.addJavascriptInterface(new JS_Com_Bind(this, xWalkView, personnel), "Android");
 
         xWalkView.clearCache(true);
         xWalkView.load(COM_URL, null);
