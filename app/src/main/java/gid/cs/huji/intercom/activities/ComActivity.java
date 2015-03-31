@@ -20,7 +20,9 @@ public class ComActivity extends Activity{
 
     private static final String TAG = ComActivity.class.getSimpleName();
 
-    public static final String COM_URL = "http://e-10.cs.huji.ac.il:8000/intercom/webrtc_example/";
+//    public static final String COM_URL = "http://e-10.cs.huji.ac.il:8000/intercom/webrtc_example/";
+
+    public static final String COM_URL = "https://iwet-12.cs.huji.ac.il:8888/";
 
     private XWalkView xWalkView;
 

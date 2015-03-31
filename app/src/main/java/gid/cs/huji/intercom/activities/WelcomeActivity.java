@@ -89,7 +89,6 @@ public class WelcomeActivity extends FragmentActivity implements BrowseFragment.
         Log.d(TAG, "Finished search()");
 
 
-
         startService(intent);
     }
 

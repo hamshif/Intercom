@@ -62,7 +62,7 @@ public class JS_Com_Bind
 
     /** Show a toast from the web page */
     @JavascriptInterface
-    public void showTriviaDialog(String text)
+    public void showDialog(String text)
     {
         Log.d("Shpootser", text);
         // 1. Instantiate an AlertDialog.Builder with its constructor
@@ -70,7 +70,7 @@ public class JS_Com_Bind
 
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setMessage(text)
-               .setTitle("Trivia Answer");
+               .setTitle("Answer");
 
         builder.setNegativeButton("close", new DialogInterface.OnClickListener() {
 
