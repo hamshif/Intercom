@@ -23,9 +23,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import gid.cs.huji.intercom.json_deserialize.JsonToPersonnel;
 import gid.cs.huji.intercom.model.Personnel;
@@ -43,7 +53,8 @@ public class PersonnelService extends IntentService
     public static final String PROPERTY_QUERY_TYPE = "QUERY_TYPE";
     public static final String PROPERTY_QUERY = "PROPERTY_QUERY";
 
-    private static final String SERVER_URL = "http://e-10:8000/intercom/personnel_map";
+    private static final String SERVER_URL = "https://e-10:8000/intercom/personnel_map";
+//    private static final String SERVER_URL = "http://e-10:8000/intercom/personnel_map";
     public static final String PERSONNEL_MESSENGER = "personnel_messenger";
     public static final String PERSONNEL_UPDATE_PROGRESS = "personnel_update_process";
 
@@ -166,6 +177,50 @@ public class PersonnelService extends IntentService
             StringBuilder builder = new StringBuilder();
             HttpClient client = new DefaultHttpClient();
 
+            try {
+                // Create a trust manager that does not validate certificate chains
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(
+                        TrustManagerFactory.getDefaultAlgorithm());
+                // Initialise the TMF as you normally would, for example:
+                tmf.init((KeyStore) null);
+
+                TrustManager[] trustManagers = tmf.getTrustManagers();
+                final X509TrustManager origTrustmanager = (X509TrustManager) trustManagers[0];
+
+                TrustManager[] wrappedTrustManagers = new TrustManager[]{
+                        new X509TrustManager() {
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return origTrustmanager.getAcceptedIssuers();
+                            }
+
+                            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//                                try {
+//                                    origTrustmanager.checkClientTrusted(certs, authType);
+//                                } catch (CertificateException e) {
+//                                    e.printStackTrace();
+//                                }
+                            }
+
+                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//                                try {
+//                                    origTrustmanager.checkServerTrusted(certs, authType);
+//                                } catch (CertificateExpiredException e) {
+//                                } catch (CertificateException e) {
+//                                    e.printStackTrace();
+//                                }
+                            }
+                        }
+                };
+
+                SSLContext sc = SSLContext.getInstance("TLS");
+                sc.init(null, wrappedTrustManagers, null);
+                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            }
+            catch (Exception e)
+            {
+
+            }
+
             HttpGet httpGet = new HttpGet(searchQuery);
 
             InputStream content = null;
@@ -195,11 +250,11 @@ public class PersonnelService extends IntentService
             }
             catch (ClientProtocolException e)
             {
-                Log.e(TAG, e.getLocalizedMessage());
+                Log.e(TAG, "", e);
             }
             catch (IOException e)
             {
-                Log.e(TAG, e.getLocalizedMessage());
+                Log.e(TAG, "", e);
             }
             finally
             {
@@ -209,63 +264,7 @@ public class PersonnelService extends IntentService
                 }
                 catch (IOException e)
                 {
-                    Log.e(TAG, e.getLocalizedMessage());
-                }
-            }
-
-            return builder.toString();
-        }
-
-
-        private String downloadFile(String searchQuery)
-        {
-            StringBuilder builder = new StringBuilder();
-            HttpClient client = new DefaultHttpClient();
-
-            HttpGet httpGet = new HttpGet(searchQuery);
-
-            InputStream content = null;
-
-            try
-            {
-                HttpResponse response = client.execute(httpGet);
-                StatusLine statusLine = response.getStatusLine();
-                int statusCode = statusLine.getStatusCode();
-
-                if (statusCode == 200)
-                {
-                    HttpEntity entity = response.getEntity();
-                    content = entity.getContent();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-                    String line;
-
-                    while ((line = reader.readLine()) != null)
-                    {
-                        builder.append(line);
-                    }
-                }
-                else
-                {
-                    Log.e(TAG, "Failed to download file");
-                }
-            }
-            catch (ClientProtocolException e)
-            {
-                Log.e(TAG, e.getLocalizedMessage());
-            }
-            catch (IOException e)
-            {
-                Log.e(TAG, e.getLocalizedMessage());
-            }
-            finally
-            {
-                try
-                {
-                    content.close();
-                }
-                catch (IOException e)
-                {
-                    Log.e(TAG, e.getLocalizedMessage());
+                    Log.e(TAG, "", e);
                 }
             }
 
