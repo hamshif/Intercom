@@ -53,7 +53,7 @@ public class PersonnelService extends IntentService
     public static final String PROPERTY_QUERY_TYPE = "QUERY_TYPE";
     public static final String PROPERTY_QUERY = "PROPERTY_QUERY";
 
-    private static final String SERVER_URL = "https://e-10:8000/intercom/personnel_map";
+    private static final String SERVER_URL = "https://e-10.cs.huji.ac.il:8000/intercom/personnel_map";
 //    private static final String SERVER_URL = "http://e-10:8000/intercom/personnel_map";
     public static final String PERSONNEL_MESSENGER = "personnel_messenger";
     public static final String PERSONNEL_UPDATE_PROGRESS = "personnel_update_process";
@@ -106,6 +106,11 @@ public class PersonnelService extends IntentService
 
             Log.d(TAG, "This is the result of the get: " + s);
 
+            if(s == null || s == "")
+            {
+                return null;
+            }
+
             tellUI("got data");
 
             JsonToPersonnel jsonToPersonnel = new JsonToPersonnel();
@@ -145,7 +150,21 @@ public class PersonnelService extends IntentService
             roomDao.createTable();
             personnelDao.createTable();
 
-            HashMap<Integer, Room> rooms = (HashMap)personnelMap.get(Room.ROOMS);
+
+            Object a = personnelMap.get(Room.ROOMS);
+
+
+            HashMap<Integer, Room> rooms = null;
+
+            if(a != null)
+            {
+                rooms = (HashMap)personnelMap.get(Room.ROOMS);
+            }
+            else
+            {
+                return null;
+            }
+
 
             Room per_room;
 
@@ -215,21 +234,34 @@ public class PersonnelService extends IntentService
                 SSLContext sc = SSLContext.getInstance("TLS");
                 sc.init(null, wrappedTrustManagers, null);
                 HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+                Log.d(TAG, "");
             }
             catch (Exception e)
             {
-
+                Log.e(TAG, " ", e);
             }
 
+
+            Log.d(TAG, "dandy");
+
             HttpGet httpGet = new HttpGet(searchQuery);
+
 
             InputStream content = null;
 
             try
             {
+                Log.d(TAG, "candy");
+
                 HttpResponse response = client.execute(httpGet);
+
+                Log.d(TAG, "mandy mo");
+
                 StatusLine statusLine = response.getStatusLine();
                 int statusCode = statusLine.getStatusCode();
+
+                Log.d(TAG, "Status code is: " + statusCode);
 
                 if (statusCode == 200)
                 {
@@ -250,17 +282,25 @@ public class PersonnelService extends IntentService
             }
             catch (ClientProtocolException e)
             {
-                Log.e(TAG, "", e);
+                Log.e(TAG, "ClientProtocolException", e);
             }
             catch (IOException e)
             {
-                Log.e(TAG, "", e);
+                Log.e(TAG, "IOException", e);
+                Log.d(TAG, e.getMessage());
+            }
+            catch (Exception e)
+            {
+                Log.e(TAG, "Exception ", e);
             }
             finally
             {
                 try
                 {
-                    content.close();
+                    if(content != null)
+                    {
+                        content.close();
+                    }
                 }
                 catch (IOException e)
                 {
@@ -271,6 +311,10 @@ public class PersonnelService extends IntentService
             return builder.toString();
         }
     }
+
+
+
+
 
     private void tellUI(String msg)
     {
