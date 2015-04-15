@@ -11,30 +11,25 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.KeyStore;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import gid.cs.huji.intercom.json_deserialize.JsonToPersonnel;
@@ -190,129 +185,112 @@ public class PersonnelService extends IntentService
 
             return null;
         }
-
-        private String getRequest(String searchQuery)
-        {
-            StringBuilder builder = new StringBuilder();
-            HttpClient client = new DefaultHttpClient();
-
-            try {
-                // Create a trust manager that does not validate certificate chains
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-                        TrustManagerFactory.getDefaultAlgorithm());
-                // Initialise the TMF as you normally would, for example:
-                tmf.init((KeyStore) null);
-
-                TrustManager[] trustManagers = tmf.getTrustManagers();
-                final X509TrustManager origTrustmanager = (X509TrustManager) trustManagers[0];
-
-                TrustManager[] wrappedTrustManagers = new TrustManager[]{
-                        new X509TrustManager() {
-                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                                return origTrustmanager.getAcceptedIssuers();
-                            }
-
-                            public void checkClientTrusted(X509Certificate[] certs, String authType) {
-//                                try {
-//                                    origTrustmanager.checkClientTrusted(certs, authType);
-//                                } catch (CertificateException e) {
-//                                    e.printStackTrace();
-//                                }
-                            }
-
-                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-//                                try {
-//                                    origTrustmanager.checkServerTrusted(certs, authType);
-//                                } catch (CertificateExpiredException e) {
-//                                } catch (CertificateException e) {
-//                                    e.printStackTrace();
-//                                }
-                            }
-                        }
-                };
-
-                SSLContext sc = SSLContext.getInstance("TLS");
-                sc.init(null, wrappedTrustManagers, null);
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-                Log.d(TAG, "");
-            }
-            catch (Exception e)
-            {
-                Log.e(TAG, " ", e);
-            }
-
-
-            Log.d(TAG, "dandy");
-
-            HttpGet httpGet = new HttpGet(searchQuery);
-
-
-            InputStream content = null;
-
-            try
-            {
-                Log.d(TAG, "candy");
-
-                HttpResponse response = client.execute(httpGet);
-
-                Log.d(TAG, "mandy mo");
-
-                StatusLine statusLine = response.getStatusLine();
-                int statusCode = statusLine.getStatusCode();
-
-                Log.d(TAG, "Status code is: " + statusCode);
-
-                if (statusCode == 200)
-                {
-                    HttpEntity entity = response.getEntity();
-                    content = entity.getContent();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-                    String line;
-
-                    while ((line = reader.readLine()) != null)
-                    {
-                        builder.append(line);
-                    }
-                }
-                else
-                {
-                    Log.e(TAG, "Status code is: " + statusCode);
-                }
-            }
-            catch (ClientProtocolException e)
-            {
-                Log.e(TAG, "ClientProtocolException", e);
-            }
-            catch (IOException e)
-            {
-                Log.e(TAG, "IOException", e);
-                Log.d(TAG, e.getMessage());
-            }
-            catch (Exception e)
-            {
-                Log.e(TAG, "Exception ", e);
-            }
-            finally
-            {
-                try
-                {
-                    if(content != null)
-                    {
-                        content.close();
-                    }
-                }
-                catch (IOException e)
-                {
-                    Log.e(TAG, "", e);
-                }
-            }
-
-            return builder.toString();
-        }
     }
 
 
+    // always verify the host - dont check for certificate
+    final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    };
+
+    /**
+     * Trust every server - dont check for any certificate
+     */
+    private static void trustAllHosts() {
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return new java.security.cert.X509Certificate[] {};
+            }
+
+            public void checkClientTrusted(X509Certificate[] chain,
+                                           String authType) throws CertificateException {
+            }
+
+            public void checkServerTrusted(X509Certificate[] chain,
+                                           String authType) throws CertificateException {
+            }
+        } };
+
+        // Install the all-trusting trust manager
+        try
+        {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "Exception ", e);
+        }
+    }
+
+    private String getRequest(String searchQuery)
+    {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader reader = null;
+
+        try
+        {
+            URL url = new URL(searchQuery);
+
+            HttpURLConnection http = null;
+
+            if (url.getProtocol().toLowerCase().equals("https"))
+            {
+                trustAllHosts();
+                HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+                https.setHostnameVerifier(DO_NOT_VERIFY);
+                http = https;
+            }
+            else
+            {
+                http = (HttpURLConnection) url.openConnection();
+            }
+
+            InputStream content = http.getInputStream();
+
+            reader = new BufferedReader(new InputStreamReader(content));
+            String line;
+
+            while ((line = reader.readLine()) != null)
+            {
+                builder.append(line);
+            }
+
+        }
+        catch (ClientProtocolException e)
+        {
+            Log.e(TAG, "ClientProtocolException", e);
+        }
+        catch (IOException e)
+        {
+            Log.e(TAG, "IOException", e);
+            Log.d(TAG, e.getMessage());
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "Exception ", e);
+        }
+        finally
+        {
+            try
+            {
+                if(reader != null)
+                {
+                    reader.close();
+                }
+            }
+            catch (IOException e)
+            {
+                Log.e(TAG, "", e);
+            }
+        }
+
+        return builder.toString();
+    }
 
 
 
